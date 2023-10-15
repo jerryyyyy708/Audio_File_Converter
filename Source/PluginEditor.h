@@ -21,6 +21,7 @@ public:
     ~Audio_ConverterAudioProcessorEditor() override;
     std::string filename = "";
     std::string folder=".";
+    std::string root = "";
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;

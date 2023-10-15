@@ -19,8 +19,7 @@
 #include <fstream>
 #include <shlobj.h>
 #include <regex>
-
-
+#include <filesystem>
 
 std::string getFilenameFromPath(const std::string& path) {
     // Find the last occurrence of the path separator and get the substring after it
@@ -78,11 +77,18 @@ std::string openFolderDialog()
 Audio_ConverterAudioProcessorEditor::Audio_ConverterAudioProcessorEditor (Audio_ConverterAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
+    std::filesystem::path currentPath = std::filesystem::current_path();
+    
+    root = currentPath.string();
+    DBG(root);
     if(getFolderPath() == 1){
         show_path.setText("Please select output folder.", juce::dontSendNotification);
     }
     else{
         show_path.setText("Please select file to convert.", juce::dontSendNotification);
+    }
+    if (!std::filesystem::exists(root + "\\ffmpeg.exe")) {
+        show_path.setText("ffmpeg not found! Please download and place it in the Build folder before Compiling.", juce::dontSendNotification);
     }
     upload.setClickingTogglesState(true);
     upload.onClick = [&]{
@@ -101,6 +107,7 @@ Audio_ConverterAudioProcessorEditor::Audio_ConverterAudioProcessorEditor (Audio_
       std::string filePath = openFolderDialog();
       if (!filePath.empty())
       {
+          DBG(juce::String(root));
           // The selected file path is available in filePath
           DBG("Selected file path: " + juce::String(filePath));
           folder = filePath;
@@ -122,9 +129,16 @@ Audio_ConverterAudioProcessorEditor::Audio_ConverterAudioProcessorEditor (Audio_
             std::string name =  getFilenameFromPath(filename);
             std::string output = folder + '\\' + name;
             output = std::regex_replace(output, std::regex("\\.m4a$"), ".mp3");
-            std::string command = "C:\\Users\\jerryyyyy708\\VST_Plugins\\Audio_Converter\\Source\\ffmpeg.exe -i "+ filename + " " + output;
+            std::string command = "\"\"" + root + "\\" + "ffmpeg.exe\" -i \""+ filename + "\" \"" + output+"\"\"";
             //command = "dir >> C:\\Users\\jerryyyyy708\\output.txt";
             int result = system(command.c_str());
+            if(result != 0){
+                command = command + "> C:\\Users\\jerry\\output.txt 2>&1";
+                system(command.c_str());
+                show_path.setText("Error! Check file type or path.", juce::dontSendNotification);
+            }
+            else
+                show_path.setText("Success!", juce::dontSendNotification);
             //DBG(juce::String(name));
             DBG(juce::String(command));
             DBG(juce::String(result));
@@ -158,7 +172,7 @@ void Audio_ConverterAudioProcessorEditor::resized()
 {
 
   upload.setBounds(getWidth()/2-120, getHeight()/2-25, 80, 30);
-  opf.setBounds(getWidth()/2-50, getHeight()/2-140, 120, 30);
+  opf.setBounds(getWidth()/2-60, getHeight()/2-140, 120, 30);
   convert.setBounds(getWidth()/2 + 40 , getHeight()/2-25, 80, 30);
 
   show_path.setBounds(10, upload.getBottom() -80, getWidth() - 20, 40);

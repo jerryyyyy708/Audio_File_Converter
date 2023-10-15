@@ -1,3 +1,4 @@
 Builds/*
 JuceLibraryCode/*
 *.txt
+Source/ffmpeg_bytes.h

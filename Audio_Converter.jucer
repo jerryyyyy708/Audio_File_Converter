@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="Ci56y6" name="Audio_Converter" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildStandalone,buildVST3"
+              pluginManufacturer="jerryyyyy708" pluginVST3Category="Tools"
+              companyWebsite="https://jerryyyyy708.github.io/" displaySplashScreen="1">
   <MAINGROUP id="JBJqZH" name="Audio_Converter">
     <GROUP id="{230433C8-1498-4C0B-F572-F033C1C1CA19}" name="Source">
       <FILE id="zWUayo" name="PluginProcessor.cpp" compile="1" resource="0"
